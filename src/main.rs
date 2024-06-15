@@ -14,4 +14,10 @@ fn main() {
 
 fn handle_connection(mut tcp_stream: TcpStream) {
     let mut buffer = [0; 1024];
+    tcp_stream.read(&mut buffer).unwrap();
+    let response = "HTTP/1.1 200 OK\r\n\r\n";
+
+    tcp_stream.write(response.as_bytes()).unwrap();
+
+    tcp_stream.flush().unwrap();
 }
