@@ -17,14 +17,29 @@ fn handle_connection(mut tcp_stream: TcpStream) {
     let mut buffer = [0; 1024];
     tcp_stream.read(&mut buffer).unwrap();
 
-    let contents = fs::read_to_string("index.html").unwrap();
-    let response = format!(
-        "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}",
-        contents.len(),
-        contents
-    );
+    let get = b"GET / HTTP/1.1\r\n";
 
-    tcp_stream.write(response.as_bytes()).unwrap();
+    if buffer.starts_with(get) {
+        let contents = fs::read_to_string("index.html").unwrap();
+        let response = format!(
+            "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}",
+            contents.len(),
+            contents
+        );
 
-    tcp_stream.flush().unwrap();
+        tcp_stream.write(response.as_bytes()).unwrap();
+
+        tcp_stream.flush().unwrap();
+    } else {
+        let contents = fs::read_to_string("index.html").unwrap();
+        let response = format!(
+            "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}",
+            contents.len(),
+            contents
+        );
+
+        tcp_stream.write(response.as_bytes()).unwrap();
+
+        tcp_stream.flush().unwrap();
+    }
 }
